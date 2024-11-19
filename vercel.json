@@ -20,15 +20,7 @@
     }
   ],
   "env": {
-    "PYTHON_VERSION": "3.11"
-  },
-  "build": {
-    "env": {
-      "PYTHON_PATH": "/usr/local/bin/python3.11"
-    },
-    "commands": [
-      "apt-get update",
-      "apt-get install -y python3.11"
-    ]
+    "PYTHON_VERSION": "3.11",
+    "PYTHON_PATH": "/usr/local/bin/python3.11"
   }
 }
