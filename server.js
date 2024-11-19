@@ -28,15 +28,18 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
-const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+const allowedOrigins = [
+    'https://frontend-adara.vercel.app',
+    'http://localhost:3000'
+];
 
 app.use(cors({
-    origin: (origin, callback) => {
-        if (origin === allowedOrigin || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('CORS policy error: Origin not allowed'), false);
-        }
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
     },
     credentials: true,
 }));
@@ -213,6 +216,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
 });
 
 if (process.env.NODE_ENV !== 'production') {
+    console.log(process.env.NODE_ENV)
     app.listen(8001, () => {
         console.log('Server running locally at http://localhost:8001');
     });
