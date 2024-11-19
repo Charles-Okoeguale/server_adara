@@ -28,7 +28,11 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
-app.use(cors());
+const allowedOrigin = process.env.ALLOWED_ORIGIN;
+app.use(cors({
+    origin: allowedOrigin,
+    credentials: true,  
+}));
 
 const getPythonPath = async () => {
     try {
@@ -230,6 +234,8 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
         });
     }
 });
+
+
 
 
 module.exports = app;
