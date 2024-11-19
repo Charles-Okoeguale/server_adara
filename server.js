@@ -216,12 +216,5 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     }
 });
 
-if (process.env.NODE_ENV !== 'production') {
-    console.log(process.env.NODE_ENV)
-    app.listen(8001, () => {
-        console.log('Server running locally at http://localhost:8001');
-    });
-} else {
-    module.exports = app;
-}
+module.exports = app;
 
