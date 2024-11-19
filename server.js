@@ -9,15 +9,17 @@ const fs = require('fs').promises;
 const { spawn } = require('child_process');
 require('dotenv').config();
 
+const uploadsDir = '/tmp/uploads';
 
 (async () => {
     try {
-      await fs.access('/tmp/uploads');
+        await fs.access(uploadsDir);
     } catch {
-      await fs.mkdir('/tmp/uploads');
-      console.log('Created uploads directory in /tmp');
+        await fs.mkdir(uploadsDir);
+        console.log('Created uploads directory in /tmp');
     }
-  })();
+})();
+
 
 
 process.on('uncaughtException', (err) => {
