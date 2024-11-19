@@ -28,10 +28,17 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
-const allowedOrigin = process.env.ALLOWED_ORIGIN;
+const allowedOrigin = process.env.ALLOWED_ORIGIN || 'http://localhost:3000';
+
 app.use(cors({
-    origin: [allowedOrigin, 'http://localhost:3000'],
-    credentials: true,  
+    origin: (origin, callback) => {
+        if (origin === allowedOrigin || !origin) {
+            callback(null, true);
+        } else {
+            callback(new Error('CORS policy error: Origin not allowed'), false);
+        }
+    },
+    credentials: true,
 }));
 
 const getPythonPath = async () => {
@@ -205,8 +212,11 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     }
 });
 
-
-app.listen(8001, () => {
-    console.log(`Server running locally at http://localhost:8001`);
-});
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(8001, () => {
+        console.log('Server running locally at http://localhost:8001');
+    });
+} else {
+    module.exports = app;
+}
 
