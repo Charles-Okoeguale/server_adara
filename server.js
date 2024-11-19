@@ -9,8 +9,6 @@ const fs = require('fs').promises;
 const { spawn } = require('child_process');
 require('dotenv').config();
 
-const PORT = process.env.PORT;
-
 (async () => {
     try {
         await fs.access('uploads');
@@ -234,9 +232,4 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
 });
 
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-
-// module.exports = app;
+module.exports = app;
