@@ -30,7 +30,7 @@ process.on('unhandledRejection', (reason, promise) => {
 const app = express();
 const allowedOrigin = process.env.ALLOWED_ORIGIN;
 app.use(cors({
-    origin: allowedOrigin,
+    origin: [allowedOrigin, 'http://localhost:3000'],
     credentials: true,  
 }));
 
@@ -81,21 +81,7 @@ const transcribeAudio = async (inputPath, timeoutSeconds = 300) => {
     const wavPath = path.join(uploadsDir, `${baseFileName}.wav`);
     const jsonPath = path.join(uploadsDir, `${baseFileName}.json`);
     let whisperProcess = null;
-    const cleanupFiles = async () => {
-        const filesToClean = [wavPath, jsonPath];
-        for (const file of filesToClean) {
-            try {
-                const exists = await fs.access(file).then(() => true).catch(() => false);
-                if (exists) {
-                    await fs.unlink(file);
-                    console.log(`Successfully deleted: ${file}`);
-                }
-            } catch (err) {
-                console.warn(`Warning: Could not delete ${file}:`, err.message);
-            }
-        }
-    };
-    
+
     try {
         console.log('Step 1: Getting Python path...');
         const pythonPath = await getPythonPath();
@@ -149,7 +135,6 @@ const transcribeAudio = async (inputPath, timeoutSeconds = 300) => {
 
             whisperProcess.on('exit', async (code) => {
                 if (code === 0) {
-                    // Wait a bit for file system to finish writing
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     resolve({
                         stdout: stdout.join('\n'),
@@ -182,8 +167,6 @@ const transcribeAudio = async (inputPath, timeoutSeconds = 300) => {
 
         console.log('JSON file found');
         const transcriptionData = JSON.parse(await fs.readFile(jsonPath, 'utf8'));
-        console.log('Cleaning up temporary files...');
-        await cleanupFiles();
         return transcriptionData;
 
     } catch (error) {
@@ -195,20 +178,9 @@ const transcribeAudio = async (inputPath, timeoutSeconds = 300) => {
                 console.error('Error killing whisper process:', killError);
             }
         }
-        await cleanupFiles();
         throw error;
     }
 };
-
-const cleanupFiles = async (inputPath, jsonPath) => {
-    try {
-        await fs.unlink(inputPath).catch(console.error);
-        await fs.unlink(jsonPath).catch(console.error);
-    } catch (error) {
-        console.error('Error deleting files:', error);
-    }
-};
-
 
 app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     try {
@@ -219,9 +191,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
         const inputPath = req.file.path;
         console.log(inputPath, "input path")
         const transcriptionData = await transcribeAudio(inputPath);
-        console.log(transcriptionData, "trans")
-        const jsonPath = inputPath.replace('.webm', '.json');
-        await cleanupFiles(inputPath, jsonPath);
+        
         res.json({
             transcription: transcriptionData.text,
             segments: transcriptionData.segments
@@ -236,6 +206,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
 });
 
 
+app.listen(8001, () => {
+    console.log(`Server running locally at http://localhost:8001`);
+});
 
-
-module.exports = app;
