@@ -7,6 +7,9 @@ const util = require('util');
 const execPromise = util.promisify(exec);
 const fs = require('fs').promises;
 const { spawn } = require('child_process');
+require('dotenv').config();
+
+const PORT = process.env.PORT;
 
 (async () => {
     try {
@@ -27,6 +30,7 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
+app.use(cors());
 
 const getPythonPath = async () => {
     try {
@@ -48,7 +52,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-app.use(cors());
 
 const ensureUploadsDir = async () => {
     try {
@@ -231,7 +234,9 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
 });
 
 
-const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+
+// module.exports = app;
