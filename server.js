@@ -11,36 +11,25 @@ require('dotenv').config();
 
 const uploadsDir = '/tmp/uploads';
 
-(async () => {
-    try {
-        await fs.access(uploadsDir);
-    } catch {
-        await fs.mkdir(uploadsDir);
-        console.log('Created uploads directory in /tmp');
-    }
-})();
-
-
 const ensureUploadsDir = async () => {
     try {
-        await fs.mkdir('/tmp/uploads', { recursive: true });
-        console.log('Created uploads directory in /tmp');
+        await fs.mkdir(uploadsDir, { recursive: true });
+        console.log('Uploads directory is ready');
     } catch (error) {
-        if (error.code === 'EEXIST') {
-            console.log('Uploads directory already exists');
-        } else {
-            console.error('Error ensuring uploads directory:', error);
-            throw error;
-        }
+        console.error('Error ensuring uploads directory:', error);
+        throw error;
     }
 };
 
-
 (async () => {
-    await ensureUploadsDir();
-    console.log('Uploads directory check complete');
+    try {
+        await ensureUploadsDir();
+        console.log('Uploads directory check complete');
+    } catch (error) {
+        console.error('Failed to initialize uploads directory:', error);
+        process.exit(1); 
+    }
 })();
-
 
 
 process.on('uncaughtException', (err) => {
