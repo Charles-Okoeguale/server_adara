@@ -30,7 +30,7 @@ process.on('unhandledRejection', (reason, promise) => {
 const app = express();
 
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://frontend-adara.vercel.app'],
+    origin: ['https://frontend-adara.vercel.app'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
