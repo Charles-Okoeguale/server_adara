@@ -21,6 +21,27 @@ const uploadsDir = '/tmp/uploads';
 })();
 
 
+const ensureUploadsDir = async () => {
+    try {
+        await fs.mkdir('/tmp/uploads', { recursive: true });
+        console.log('Created uploads directory in /tmp');
+    } catch (error) {
+        if (error.code === 'EEXIST') {
+            console.log('Uploads directory already exists');
+        } else {
+            console.error('Error ensuring uploads directory:', error);
+            throw error;
+        }
+    }
+};
+
+
+(async () => {
+    await ensureUploadsDir();
+    console.log('Uploads directory check complete');
+})();
+
+
 
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
@@ -31,6 +52,8 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const app = express();
+
+
 
 app.use(cors({
     origin: ['https://frontend-adara.vercel.app'],
@@ -60,15 +83,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-const ensureUploadsDir = async () => {
-    try {
-        await fs.access('/tmp/uploads');
-    } catch {
-        await fs.mkdir('/tmp/uploads');
-    }
-};
 
-ensureUploadsDir();
+
 
 
 const fileExists = async (filePath) => {
