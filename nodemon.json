@@ -1,0 +1,4 @@
+{
+    "ignore": ["*.json", "*.wav", "uploads/*"],
+    "delay": "2500"
+  }
