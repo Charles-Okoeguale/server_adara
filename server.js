@@ -51,7 +51,7 @@ const getPythonPath = async () => {
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/')
+        cb(null, '/tmp/uploads')
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname))
@@ -62,9 +62,9 @@ const upload = multer({ storage: storage });
 
 const ensureUploadsDir = async () => {
     try {
-        await fs.access('uploads');
+        await fs.access('/tmp/uploads');
     } catch {
-        await fs.mkdir('uploads');
+        await fs.mkdir('/tmp/uploads');
     }
 };
 
@@ -81,7 +81,7 @@ const fileExists = async (filePath) => {
 };
 
 const transcribeAudio = async (inputPath, timeoutSeconds = 300) => {
-    const uploadsDir = path.resolve('uploads');
+    const uploadsDir = path.resolve('/tmp/uploads');
     const baseFileName = path.basename(inputPath, path.extname(inputPath));
     const wavPath = path.join(uploadsDir, `${baseFileName}.wav`);
     const jsonPath = path.join(uploadsDir, `${baseFileName}.json`);
