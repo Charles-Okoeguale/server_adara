@@ -45,7 +45,8 @@ const app = express();
 
 
 app.use(cors({
-    origin: ['https://frontend-adara.vercel.app'],
+    // origin: ['https://frontend-adara.vercel.app'],
+    origin: ['http://localhost:3000'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
