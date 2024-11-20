@@ -14,7 +14,7 @@ const openai = new OpenAI({
 const upload = multer({ dest: "/tmp/uploads/" });
 
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: ['https://frontend-adara-egualecharlesgmailcoms-projects.vercel.app/'],
     credentials: true,
     allowedHeaders: ['Content-Type', 'Authorization']
 }));
