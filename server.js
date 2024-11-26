@@ -16,8 +16,9 @@ const app = express();
 app.use(cors({
     origin: "*",
     credentials: true,
+    methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Final-Chunk']
-}));
+  }));
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
