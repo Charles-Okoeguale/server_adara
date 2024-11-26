@@ -26,7 +26,7 @@ const openai = new OpenAI({
 let audioChunks = []; 
 let isRecordingComplete = false;
 
-app.post('/transcribe-audio', (req, res) => {  // the issue is when the first first chunk has been sent . the second time brings up an error.
+app.post('/transcribe-audio', (req, res) => {
     const audioChunks = [];
     req.setTimeout(0);
   
