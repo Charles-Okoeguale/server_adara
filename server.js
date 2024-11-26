@@ -6,7 +6,12 @@ require('dotenv').config();
 const OpenAI = require("openai");
 const path = require('path');
 const bodyParser = require('body-parser');
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 10 * 1024 * 1024, // 10 MB
+    },
+  });
 const { spawn } = require('child_process');
 const { clear } = require('console');
 const { v4: uuidv4 } = require('uuid');
@@ -18,7 +23,7 @@ app.use(cors({
     credentials: true,
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Final-Chunk']
-  }));
+}));
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -27,7 +32,7 @@ const openai = new OpenAI({
 let audioChunks = []; 
 let isRecordingComplete = false;
 
-app.post('/transcribe-audio', (req, res) => {
+app.post('/transcribe-audio', upload.any(), (req, res) => {
     const audioChunks = [];
     req.setTimeout(0);
   
@@ -90,13 +95,9 @@ app.post('/transcribe-audio', (req, res) => {
         console.log('REQUEST END EVENT TRIGGERED');
   
         if (isFinalChunk) {
-          const combinedAudio = Buffer.concat(audioChunks);
-          const uploadDir = path.resolve(__dirname, 'uploads');
-            const tempFilePath = path.join(uploadDir, `temp-audio-${uuidv4()}.webm`);
-            const tempWavPath = path.join(uploadDir, `temp-audio-${uuidv4()}.wav`);
-            // const tempFilePath = path.resolve(__dirname, `temp-audio-${uuidv4()}.webm`);
-            // const tempWavPath = path.resolve(__dirname, `temp-audio-${uuidv4()}.wav`);
-  
+            const combinedAudio = Buffer.concat(audioChunks);
+            const tempFilePath = `temp-audio-${uuidv4()}.webm`;
+            const tempWavPath = `temp-audio-${uuidv4()}.wav`;
           try {
             fs.writeFileSync(tempFilePath, combinedAudio);
             const stats = fs.statSync(tempFilePath);
