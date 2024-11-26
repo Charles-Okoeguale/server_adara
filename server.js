@@ -79,7 +79,7 @@ app.post('/transcribe-audio', upload.any(), (req, res) => {
     
             ffmpeg.on('error', (err) => {
             console.error('FFmpeg error:', err);
-            resolve(''); // Return empty result
+            resolve(''); 
             });
         });
     };
