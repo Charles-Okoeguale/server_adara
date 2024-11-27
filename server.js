@@ -32,6 +32,8 @@ const openai = new OpenAI({
 let audioChunks = []; 
 let isRecordingComplete = false;
 
+const PORT = process.env.PORT || 8001;
+
 app.post('/transcribe-audio', upload.any(), (req, res) => {
     const audioChunks = [];
     req.setTimeout(0);
@@ -161,5 +163,9 @@ function getMimeType(extension) {
 }
 }
 
+const server = app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
 
-module.exports = app;
+
+module.exports = server;
