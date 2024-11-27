@@ -145,13 +145,12 @@ app.post('/transcribe-audio', upload.any(), (req, res) => {
     }
 });
   
-  // Function to get file type
 function getFileType(filePath) {
 const fileExtension = path.extname(filePath);
 const mimeType = getMimeType(fileExtension);
 return mimeType;
 
-// Map file extensions to MIME types
+
 function getMimeType(extension) {
     switch (extension) {
     case '.webm':
